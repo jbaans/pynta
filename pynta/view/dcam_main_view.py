@@ -6,7 +6,8 @@ Equivalent of main.py which includes NI DAQ and does not use SubscriberThread)
 import logging
 import os
 from PyQt5 import uic
-from pynta.util.QWorkerThread import WorkThread
+from PyQt5.QtCore import QThreadPool
+from pynta.util.QWorkerThread import Worker
 from PyQt5.QtWidgets import QMainWindow, QStatusBar
 from pynta.util.log import get_logger
 import time
@@ -22,6 +23,10 @@ class MainWindow(MainWindowGUI):
         :param nanoparticle_tracking.model.experiment.win_nanocet.NPTracking experiment: Experiment class
         """
         super().__init__(experiment.config['GUI']['refresh_time'])
+        
+        # Create a threadpool to put threads for Workers in
+        self.threadpool = QThreadPool()
+        print("Multithreading with maximum %d threads" % self.threadpool.maxThreadCount())
 
         self.experiment = experiment
         self.plot_widget.set_model(experiment.daq_controller)
@@ -56,11 +61,15 @@ class MainWindow(MainWindowGUI):
         """
         for name in self.experiment.measurement_methods:
             self.measurement_combo.addItem(name)
+
         def runmeas():
             name = self.measurement_combo.currentText()
             measurement_method = self.experiment.measurement_methods[name]
-            thread = WorkThread(measurement_method)
-            thread.start()
+            worker = Worker(measurement_method)
+            # add worker to the threadpool and have it started.
+            # This automatically calls the worker.run() method with *args and *kwargs set using __init__()
+            self.threadpool.start(worker)
+
         self.measurement_run.clicked.connect(runmeas)
 
     def zoom_ROI_prime(self):

@@ -206,14 +206,19 @@ class Experiment(BaseExperiment):
         self.toggle_live_image_processing_method = self.toggle_variance  # Change this to another method to have the GUI button link to it
 
         self.measurement_methods = {'Example measurement method': self.my_measurement,
+                                    'Example measurement method1': self.my_measurement1,
                                     }
 
     def my_measurement(self):
+        if hasattr(self, 'my_measurement_running') and self.my_measurement_running:
+            # It's already running in a thread, return to caller
+            return
+        self.my_measurement_running = True
         # self.config['measurements']['a']
         self.logger.info('do awesome measurement')
         if not self.hdf5.is_closed:
             self.hdf5.close()
-        self._pipeline = DataPipeline(self)
+        # self._pipeline = DataPipeline(self) # creating a new pipeline here overwrites the existing one
         filename = os.path.join(self.save_path, 'a')
         self.hdf5 = FileWrangler(filename)
         self.start_free_run()
@@ -224,6 +229,37 @@ class Experiment(BaseExperiment):
         self.stop_save_stream()
         self.stop_free_run()
         self.hdf5.close()
+        self.my_measurement_running = False
+
+
+    def my_measurement1(self):
+        if hasattr(self, 'my_measurement_running') and self.my_measurement_running:
+            # It's already running in a thread, return to caller
+            return
+        self.my_measurement_running = True
+        # self.config['measurements']['a']
+        self.logger.info('do repeated measurement')
+        
+        frequencies = [1, 5, 10]
+        
+        for frequency in frequencies:
+            if not self.hdf5.is_closed:
+                self.hdf5.close()
+            # self._pipeline = DataPipeline(self) # creating a new pipeline here overwrites the existing one
+            filename = os.path.join(self.save_path+f'_{frequency}', 'a')
+            self.hdf5 = FileWrangler(filename)
+            self.start_free_run()
+            self.save_stream()
+            self.daq_controller.start_sine_task(frequency=frequency, amplitude=1, offset=0,)
+            for k in range(20):
+                time.sleep(0.2)
+                print(self.temp_image[90,90])
+            self.stop_save_stream()
+            self.daq_controller.stop_all()
+            self.stop_free_run()
+            self.hdf5.close()
+        
+        self.my_measurement_running = False
 
 
     # def bg_video(self):

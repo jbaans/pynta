@@ -1,0 +1,102 @@
+{% set version = "0.1.4" %}
+{% set python_version = "3.7" %}
+
+package:
+  name: "pynta"
+  version: "0.1.4"
+
+about:
+  summary: Python Nanoparticle Tracking Analysis
+  home: https://github.com/nanoepics/pynta
+  author: Aquiles Carattino
+  author-email: aquiles@uetke.com
+  license: GPLv3
+  
+requirements:
+  build:
+    - python={{ python_version }}
+    - conda-verify
+    - fonttools
+    - wheel
+    - pip
+    - setuptools-rust
+    - cached-property
+    - cycler
+    - h5py
+    - importlib_resources
+    - kiwisolver
+    - matplotlib
+    - nidaqmx-python
+    - numba
+    - numpy=1.19.5
+    - packaging
+    - pandas
+    - pillow
+    - pint
+    - pip
+    - ply
+    - pyparsing
+    - pyqt==5.15.7
+    - pyqt5-sip
+    - pyqtgraph
+    - python-dateutil
+    - pytz
+    - pyyaml
+    - pyzmq
+    - scipy
+    - rust=1.64.0
+    - setuptools
+    - setuptools-rust
+    - sip
+    - trackpy
+    - toml
+  host:
+    - python={{ python_version }}
+    - cached-property
+    - conda-verify
+    - cycler
+    - fonttools
+    - h5py
+    - importlib_resources
+    - kiwisolver
+    - matplotlib
+    - nidaqmx-python
+    - numba
+    - numpy=1.19.5
+    - packaging
+    - pandas
+    - pillow
+    - pint
+    - pip
+    - ply
+    - pyparsing
+    - pyqt==5.15.7
+    - pyqt5-sip
+    - pyqtgraph
+    - python-dateutil
+    - pytz
+    - pyyaml
+    - pyzmq
+    - scipy
+    - rust=1.64.0
+    - setuptools
+    - setuptools-rust
+    - sip
+    - trackpy
+    - toml
+  run:
+    - importlib_metadata
+    - matplotlib
+    - numpy=1.19.5
+    - pyqt==5.15.7
+    - python={{ python_version }}
+    - rust=1.64.0
+    - typing-extensions
+    - vc
+    
+source:
+  path: ..
+
+build:
+  script: python setup.py install --single-version-externally-managed --record=record.txt
+  string: py{{ python_version | replace(".", "") }}

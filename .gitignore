@@ -24,3 +24,5 @@ fpsdata.txt
 rust_modules/*/target
 *.pyd
 Cargo.lock
+rust_modules/pynta_driver_glue
+.vscode

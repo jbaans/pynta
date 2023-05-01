@@ -1,6 +1,8 @@
 import os
 import time
+import shutil
 from argparse import ArgumentParser
+from pathlib import Path
 import logging
 from PyQt5.QtWidgets import QApplication
 
@@ -31,7 +33,9 @@ def main():
     if args.config_file is None:
         config_file = os.path.join(pynta.package_path, 'user', 'user_config.yml')
         if not os.path.exists(config_file):
-            import shutil
+            # if directory does not exist, make it:
+            if not os.path.exists(Path(config_file).parent):
+                os.makedirs(Path(config_file).parent)         
             shutil.copy(os.path.join(pynta.package_path, 'util', 'example_config.yml'), config_file)
             print('\n\n******************************\n\nA user config file was created in {}\nThis file is ignored by git. \nIt will be loaded by default.\nPlease only modify that config file. \nMake sure to change the saving path.\n\n******************************\n\n'.format(config_file))
     else:
@@ -42,7 +46,9 @@ def main():
     except:
         software_config_file = os.path.join(pynta.package_path, 'user', 'software_config.py')
         if not os.path.exists(software_config_file):
-            import shutil
+            # if directory does not exist, make it:
+            if not os.path.exists(Path(software_config_file).parent):
+                os.makedirs(Path(software_config_file).parent)
             shutil.copy(os.path.join(pynta.package_path, 'util', 'software_config.py'), software_config_file)
             print('\n\n******************************\n\nA software config file was created in {}\nThis file is ignored by git. \nIt will be loaded by default.\nPlease only modify that software config file.\n\n******************************\n\n'.format(software_config_file))
             time.sleep(1)

@@ -28,7 +28,8 @@ class CameraViewerWidget(QWidget):
         self.autoScale.triggered.connect(self.do_auto_scale)
         self.view.menu.addAction(self.autoScale)
 
-        self.img = pg.ImageItem()
+        # ImageItem needs to be not None for setImage to work
+        self.img = pg.ImageItem(image=np.eye(1048), levels=(0,1))
         self.marker = pg.PlotDataItem(pen=None)
         self.marker.setBrush(255, 0, 0, 255)
         self.view.addItem(self.img)
